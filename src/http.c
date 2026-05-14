@@ -53,7 +53,7 @@ void send_response(int client_fd, int status, const char *status_text,
 }
 
 void handle_description(int client_fd, const char *body) {
-  send_response(client_fd, 200, "OK", "text/xml", body);
+  send_response(client_fd, 200, "OK", "text/xml; charset=utf-8", body);
 }
 
 void handle_not_found(int client_fd, const char *body) {
@@ -97,7 +97,26 @@ void handle_client(int client_fd) {
       handle_description(client_fd, body);
       close(client_fd);
       return;
+    } else if (strcmp("/scpd/avt", path) == 0) {
+      path_matched = 1;
+      body = avtSCPDXML();
+      handle_description(client_fd, body);
+      close(client_fd);
+      return;
+    } else if (strcmp("/scpd/rc", path) == 0) {
+      path_matched = 1;
+      body = rcSCPDXML();
+      handle_description(client_fd, body);
+      close(client_fd);
+      return;
+    } else if (strcmp("/scpd/cm", path) == 0) {
+      path_matched = 1;
+      body = cmSCPDXML();
+      handle_description(client_fd, body);
+      close(client_fd);
+      return;
     }
+
     handle_not_found(client_fd, NULL);
     close(client_fd);
     return;
