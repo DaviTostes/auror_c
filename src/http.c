@@ -7,7 +7,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-void setup_socket(int *server_fd) {
+void setup_http_socket(int *server_fd) {
   *server_fd = socket(AF_INET, SOCK_STREAM, 0);
   if (*server_fd < 0) {
     perror("socket");
@@ -35,6 +35,22 @@ void setup_socket(int *server_fd) {
     perror("listen");
     exit(EXIT_FAILURE);
   }
+
+  while (1) {
+    struct sockaddr_in client_addr;
+    socklen_t client_len = sizeof(client_addr);
+
+    int client_fd =
+        accept(*server_fd, (struct sockaddr *)&client_addr, &client_len);
+    if (client_fd < 0) {
+      perror("accept");
+      continue;
+    }
+
+    handle_client(client_fd);
+  }
+
+  close(*server_fd);
 }
 
 void send_response(int client_fd, int status, const char *status_text,
