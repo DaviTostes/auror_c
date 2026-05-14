@@ -1,8 +1,11 @@
 #include "lib/http.h"
+#include "lib/scpd.h"
 #include "lib/utils.h"
+#include <arpa/inet.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/socket.h>
 #include <time.h>
 #include <unistd.h>
 
@@ -37,6 +40,20 @@ int main() {
 
   int server_fd;
   setup_socket(&server_fd);
+
+  while (1) {
+    struct sockaddr_in client_addr;
+    socklen_t client_len = sizeof(client_addr);
+
+    int client_fd =
+        accept(server_fd, (struct sockaddr *)&client_addr, &client_len);
+    if (client_fd < 0) {
+      perror("accept");
+      continue;
+    }
+
+    handle_client(client_fd);
+  }
 
   close(server_fd);
 

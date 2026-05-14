@@ -5,7 +5,7 @@
 #define BUFFER_SIZE 4096
 #define BACKLOG 10
 
-void handle_client(int client_fd, char *body);
+void handle_client(int client_fd);
 void setup_socket(int *server_fd);
 
 #endif /* HTTP_H */
