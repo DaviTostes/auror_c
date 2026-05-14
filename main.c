@@ -1,3 +1,4 @@
+#include "lib/http.h"
 #include "lib/utils.h"
 #include <stdint.h>
 #include <stdio.h>
@@ -5,7 +6,6 @@
 #include <time.h>
 #include <unistd.h>
 
-#define HTTP_PORT "49152"
 #define DEVICE_NAME "auror"
 #define MPV_BINARY "mpv"
 #define MPV_SOCKET_LEN 32
@@ -28,12 +28,17 @@ int main() {
   printf("  device name : %s\n", DEVICE_NAME);
   printf("  device UUID : %s\n", device_uuid);
   printf("  local IP    : %s\n", local_ip);
-  printf("  HTTP port   : %s\n", HTTP_PORT);
+  printf("  HTTP port   : %d\n", HTTP_PORT);
   printf("  mpv binary  : %s\n", MPV_BINARY);
   printf("  mpv socket  : %s\n", mpv_socket);
-  printf("  description : http://%s:%s/description.xml\n", local_ip, HTTP_PORT);
-  printf("  status      : http://%s:%s/status\n\n", local_ip, HTTP_PORT);
+  printf("  description : http://%s:%d/description.xml\n", local_ip, HTTP_PORT);
+  printf("  status      : http://%s:%d/status\n\n", local_ip, HTTP_PORT);
   printf("waiting for DLNA controller to connect...\n");
+
+  int server_fd;
+  setup_socket(&server_fd);
+
+  close(server_fd);
 
   return 0;
 }
